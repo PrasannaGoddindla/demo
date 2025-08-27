@@ -1,0 +1,25 @@
+---
+- name: Deploy AddressBook WAR to Tomcat
+hosts: app
+become: true
+vars:
+war_name: addressbook.war # change if your artifactId is different
+tasks:
+- name: Create temp directory
+file:
+path: /tmp/deploy
+state: directory
+mode: "0755"
+
+
+- name: Copy WAR from Jenkins workspace to remote
+copy:
+src: "{{ local_war }}"
+dest: "/var/lib/tomcat9/webapps/{{ war_name }}"
+mode: "0644"
+
+
+- name: Restart Tomcat
+service:
+name: tomcat9
+state: restarted
